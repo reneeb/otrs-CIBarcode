@@ -32,7 +32,7 @@ Even though the SysConfig defines only four supported barcode types, this packag
 
 =item * CIBarcode::BarcodeAttribute
 
-Defines which config item attribute is encoded in the barcode. Please note that EAN8 and EAN13 barcodes can handly only numeric attributes that are not longer than the number in the name (EAN8: 8-digit numbers, EAN13, 13-digit numbers).
+Defines which config item attribute is encoded in the barcode. Please note that EAN8 and EAN13 barcodes can handle only numeric attributes that are not longer than the number in the name (EAN8: 8-digit numbers, EAN13: 13-digit numbers).
 
 =item * CIBarcode::BarcodeCIURL
 
@@ -49,4 +49,4 @@ If enabled, the barcode is rebuilt when the barcode type or the attribute change
 
 This package was written by Renee Baecker E<lt>otrs@perl-services.deE<gt>.
 
-The package is licensed unter AGPL. If you did not receive this file, see http://www.gnu.org/licenses/agpl.txt.
+The package is licensed under AGPL. If you did not receive this file, see http://www.gnu.org/licenses/agpl.txt.
