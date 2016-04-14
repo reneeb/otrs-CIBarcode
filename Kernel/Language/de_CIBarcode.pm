@@ -21,11 +21,13 @@ sub Data {
 
     return if ref $Lang ne 'HASH';
 
-    $Lang->{'Type of barcode generated for the config items.'} = '';
-    $Lang->{'Attribute that is encoded in the barcode.'} = '';
-    $Lang->{'Encode config item URL in the barcode (overrides ITSMConfigItemBarcode::BarcodeAttribute and only usable with QR codes).'} = '';
-    $Lang->{'The barcode should be rebuilt when the barcode type and/or the value of the attribute (or the attribute itself) changed.'} = '';
-    $Lang->{'Height of the barcode image.'} = '';
+    $Lang->{'Type of barcode generated for the config items.'} = 'Art des Barcodes der für Config Items generiert wird.';
+    $Lang->{'Attribute that is encoded in the barcode.'} = 'Attribut, das im Barcode codiert wird.';
+    $Lang->{'Encode config item URL in the barcode (overrides ITSMConfigItemBarcode::BarcodeAttribute and only usable with QR codes).'} =
+        'Kodiere die URL zum Config Item im Barcode (überschreibt ITSMConfigItemBarcode::BarcodeAttribute und nutzt QR-Codes).';
+    $Lang->{'The barcode should be rebuilt when the barcode type and/or the value of the attribute (or the attribute itself) changed.'} =
+        'Der Barcode soll neu erstellt werden wenn der Barcodetyp und/oder der Wert des Attributs (oder das Attribut selbst) sich ändert.';
+    $Lang->{'Height of the barcode image.'} = 'Höhe des Barcodes';
     $Lang->{'No'} = 'Nein';
     $Lang->{'Yes'} = 'Ja';
 
