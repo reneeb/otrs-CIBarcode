@@ -27,8 +27,8 @@
         <SubGroup>Barcode</SubGroup>
         <Setting>
             <Option SelectedID="0">
-                <Item Key="0">No</Item>
-                <Item Key="1">Yes</Item>
+                <Item Key="0" Translatable="1">No</Item>
+                <Item Key="1" Translatable="1">Yes</Item>
             </Option>
         </Setting>
     </ConfigItem>
@@ -38,8 +38,8 @@
         <SubGroup>Barcode</SubGroup>
         <Setting>
             <Option SelectedID="1">
-                <Item Key="0">no</Item>
-                <Item Key="1">yes</Item>
+                <Item Key="0" Translatable="1">No</Item>
+                <Item Key="1" Translatable="1">Yes</Item>
             </Option>
         </Setting>
     </ConfigItem>
