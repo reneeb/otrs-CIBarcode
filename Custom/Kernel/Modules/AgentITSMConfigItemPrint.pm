@@ -257,7 +257,7 @@ sub Run {
        $File->print( $Barcode->{Data} );
     }
 
-    my $Factor = 2;
+    my $Factor = $ConfigObject->Get('ITSMConfigItemBarcode::Factor') || 2;
     # insert image in PDF
     if ( $Path ) {
       $PDFObject->Image(
