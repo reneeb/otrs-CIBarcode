@@ -168,8 +168,13 @@ sub _BarcodeGenerate {
     my $HeightConfigured = $ConfigObject->Get( 'ITSMConfigItemBarcode::BarcodeHeight' ) || 80;
     my %Options;
 
+    my $Config = $ConfigObject->Get( 'ITSMConfigItemBarcode::' . $Type ) || {};
     if ( $Type eq 'QRcode' ) {
-        %Options = ( Ecc => 'H', Version => 11, ModuleSize => 5 );
+        %Options = (
+            Ecc        => $Config->{Ecc}        || 'H',
+            Version    => $Config->{Version}    || 11,
+            ModuleSize => $Config->{ModuleSize} || 5,
+        );
     }
     elsif ( $Type eq 'Code39' ) {
         $Value = "*$Value*";

@@ -1,10 +1,10 @@
 # --
-# Copyright (C) 2001-2016 OTRS AG, http://otrs.com/
+# Copyright (C) 2001-2019 OTRS AG, http://otrs.com/
 # Changes Copyright (C) 2016 Perl-Services.de, http://perl-services.de
 # --
 # This software comes with ABSOLUTELY NO WARRANTY. For details, see
-# the enclosed file COPYING for license information (AGPL). If you
-# did not receive this file, see http://www.gnu.org/licenses/agpl.txt.
+# the enclosed file COPYING for license information (GPL). If you
+# did not receive this file, see https://www.gnu.org/licenses/gpl-3.0.txt.
 # --
 
 package Kernel::Modules::AgentITSMConfigItemPrint;
@@ -12,13 +12,15 @@ package Kernel::Modules::AgentITSMConfigItemPrint;
 use strict;
 use warnings;
 
+## nofilter(TidyAll::Plugin::OTRS::Migrations::OTRS6::SysConfig)
+
+use Kernel::Language qw(Translatable);
+
 our $ObjectManagerDisabled = 1;
 
 # --
 # Perl-Services
 # ---
-use Kernel::System::ITSMConfigItem::Barcode;
-
 use File::Temp;
 use IO::File;
 # ---
@@ -29,12 +31,6 @@ sub new {
     # allocate new hash for object
     my $Self = {%Param};
     bless( $Self, $Type );
-
-# --
-# Perl-Services
-# ---
-    $Self->{BarcodeObject} = Kernel::System::ITSMConfigItem::Barcode->new(%Param);
-# ---
 
     return $Self;
 }
@@ -55,8 +51,8 @@ sub Run {
     # check needed stuff
     if ( !$ConfigItemID || !$VersionID ) {
         return $LayoutObject->ErrorScreen(
-            Message => 'No ConfigItemID or VersionID is given!',
-            Comment => 'Please contact the admin.',
+            Message => Translatable('No ConfigItemID or VersionID is given!'),
+            Comment => Translatable('Please contact the administrator.'),
         );
     }
 
@@ -76,8 +72,8 @@ sub Run {
 
         # error page
         return $LayoutObject->ErrorScreen(
-            Message => 'Can\'t show config item, no access rights given!',
-            Comment => 'Please contact the admin.',
+            Message => Translatable('Can\'t show config item, no access rights given!'),
+            Comment => Translatable('Please contact the administrator.'),
         );
     }
 
@@ -87,8 +83,9 @@ sub Run {
     );
     if ( !$ConfigItem->{ConfigItemID} ) {
         return $LayoutObject->ErrorScreen(
-            Message => "ConfigItemID $ConfigItemID not found in database!",
-            Comment => 'Please contact the admin.',
+            Message =>
+                $LayoutObject->{LanguageObject}->Translate( 'ConfigItemID %s not found in database!', $ConfigItemID ),
+            Comment => Translatable('Please contact the administrator.'),
         );
     }
 
@@ -98,8 +95,8 @@ sub Run {
     );
     if ( !$Version->{VersionID} ) {
         return $LayoutObject->ErrorScreen(
-            Message => "VersionID $VersionID not found in database!",
-            Comment => 'Please contact the admin.',
+            Message => $LayoutObject->{LanguageObject}->Translate( 'VersionID %s not found in database!', $VersionID ),
+            Comment => Translatable('Please contact the administrator.'),
         );
     }
 
@@ -221,9 +218,11 @@ sub Run {
 
     # output "printed by"
     $PDFObject->Text(
-        Text => $LayoutObject->{LanguageObject}->Translate('printed by') . ' '
-            . $Self->{UserFullname} . ' '
-            . $LayoutObject->{Time},
+        Text => $LayoutObject->{LanguageObject}->Translate(
+            'printed by %s at %s',
+            $Self->{UserFullname},
+            $LayoutObject->{Time},
+        ),
         FontSize => 9,
     );
 
@@ -235,11 +234,12 @@ sub Run {
 # ---
 # Perl-Services
 # ---
-    my $Barcode = $Self->{BarcodeObject}->BarcodeGet(
+    my $BarcodeObject = $Kernel::OM->Get('Kernel::System::ITSMConfigItem::Barcode');
+    my $Barcode = $BarcodeObject->BarcodeGet(
         ConfigItemID => $ConfigItemID,
     ) || {};
 
-        
+    if ( $Barcode && keys %{$Barcode} ) {
     my $Path = $Barcode->{Barcode};
     my $IsTmpFile;
 
@@ -273,6 +273,7 @@ sub Run {
             Priority => 'error',
             Message  => "Can't delete $Path: $!",
         );
+    }
     }
 # ---
 
@@ -313,19 +314,15 @@ sub Run {
         Type     => 'Attachment',
     );
 
-    # get time object
-    my $TimeObject = $Kernel::OM->Get('Kernel::System::Time');
-
-    my ( $s, $m, $h, $D, $M, $Y ) = $TimeObject->SystemTime2Date(
-        SystemTime => $TimeObject->SystemTime(),
-    );
-    $M = sprintf( "%02d", $M );
-    $D = sprintf( "%02d", $D );
-    $h = sprintf( "%02d", $h );
-    $m = sprintf( "%02d", $m );
+    # Get current system datetime object.
+    my $CurrentSystemDTObj = $Kernel::OM->Create('Kernel::System::DateTime');
 
     return $LayoutObject->Attachment(
-        Filename    => 'configitem_' . $Filename . "_$Y-$M-$D\_$h-$m.pdf",
+        Filename => sprintf(
+            'configitem_%s_%s.pdf',
+            $Filename,
+            $CurrentSystemDTObj->Format( Format => '%F_%H-%M' ),
+        ),
         ContentType => 'application/pdf',
         Content     => $PDFObject->DocumentOutput(),
         Type        => 'inline',
@@ -478,7 +475,7 @@ sub _PDFOutputLinkedObjects {
     for my $LinkTypeLinkDirection ( sort { lc $a cmp lc $b } keys %{ $Param{LinkData} } ) {
 
         # investigate link type name
-        my @LinkData = split q{::}, $LinkTypeLinkDirection;
+        my @LinkData     = split q{::}, $LinkTypeLinkDirection;
         my $LinkTypeName = $TypeList{ $LinkData[0] }->{ $LinkData[1] . 'Name' };
         $LinkTypeName = $LayoutObject->{LanguageObject}->Translate($LinkTypeName);
 
